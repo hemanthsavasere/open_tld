@@ -22,11 +22,20 @@
 # 5) build the project "PACKAGE" to create an NSIS-installer (NSIS is required)
 
 
-project(OpenTLD)
+project(open_tld)
 
 cmake_minimum_required(VERSION 2.6)
 
 find_package(OpenCV REQUIRED)
+
+find_package(catkin REQUIRED)
+catkin_package(
+  INCLUDE_DIRS
+    src/libopentld
+  LIBRARIES
+    opentld
+    cvblobs
+  )
 
 if(BUILD_QOPENTLD)
     find_package(Qt4 REQUIRED)
@@ -48,8 +57,9 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 option(BUILD_QOPENTLD "Build with Qt-config-dialog." OFF)
-option(USE_SYSTEM_LIBS "Use the installed version of libconfig++." OFF)
+option(USE_SYSTEM_LIBS "Use the installed version of libconfig++." ON)
 option(WITH_OPENMP "Use OpenMP." OFF)
+option(BUILD_MAIN "Build the OpenTLD application." OFF)
 
 if(WITH_OPENMP)
 	find_package(OpenMP REQUIRED)
@@ -84,6 +94,9 @@ if(NOT USE_SYSTEM_LIBS)
 endif(NOT USE_SYSTEM_LIBS)
 
 add_subdirectory(src/libopentld)
-add_subdirectory(src/opentld)
 
-configure_file("${PROJECT_SOURCE_DIR}/OpenTLDConfig.cmake.in" "${PROJECT_BINARY_DIR}/OpenTLDConfig.cmake" @ONLY)
+if(BUILD_MAIN)
+  add_subdirectory(src/opentld)
+endif(BUILD_MAIN)
+
+#configure_file("${PROJECT_SOURCE_DIR}/OpenTLDConfig.cmake.in" "${PROJECT_BINARY_DIR}/OpenTLDConfig.cmake" @ONLY)
